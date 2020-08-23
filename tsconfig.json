@@ -1,0 +1,9 @@
+{
+  "include": ["src/**/*.ts"],
+  "compilerOptions": {
+      "downlevelIteration": true,
+      "esModuleInterop": true,
+      "noImplicitAny": true,
+      "strict": true,
+  }
+}
