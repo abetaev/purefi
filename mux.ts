@@ -1,8 +1,8 @@
 import peer from "./peer.ts";
 import { Peer } from "./types.ts";
 
-type Demuxed<T> = { id: string, stream: Peer<T> }
-type DemuxedPeer<T> = Peer<Demuxed<T>>
+type Demuxed<T> = { id: string; stream: Peer<T> };
+type DemuxedPeer<T> = Peer<Demuxed<T>>;
 
 /**
  * creates multiplexing/demultiplexing stream gate.
@@ -19,33 +19,31 @@ type DemuxedPeer<T> = Peer<Demuxed<T>>
 export default <T, I, O = I>(
   stream: Peer<I | O>,
   i2o: (input: I) => [string, T],
-  o2i?: (value: T, id: string) => O
+  o2i?: (value: T, id: string) => O,
 ): DemuxedPeer<T> => {
+  const demux = peer<Demuxed<T>>();
 
-  const demux = peer<Demuxed<T>>()
-
-  const peers: { [id: string]: Peer<T> } = {}
+  const peers: { [id: string]: Peer<T> } = {};
 
   const addDemuxed = ({ id, stream }: Demuxed<T>) => {
     if (peers[id]) {
-      throw new Error(`stream ${id} already muxed`)
+      throw new Error(`stream ${id} already muxed`);
     }
-    peers[id] = stream
-    o2i && stream.subscribe(output => publishUpstream(o2i(output, id)))
-    return demux.publish({ id, stream })
-  }
+    peers[id] = stream;
+    o2i && stream.subscribe((output) => publishUpstream(o2i(output, id)));
+    return demux.publish({ id, stream });
+  };
 
   const publishUpstream = stream.subscribe((input) => {
     const [id, value] = i2o(input as I);
     if (!peers[id]) {
-      addDemuxed({ id, stream: peer<T>() })
+      addDemuxed({ id, stream: peer<T>() });
     }
     peers[id].publish(value);
-  })
+  });
 
   return {
     subscribe: demux.subscribe,
-    publish: addDemuxed
-  }
-
-}
+    publish: addDemuxed,
+  };
+};

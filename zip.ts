@@ -1,4 +1,4 @@
-import peer from './peer.ts';
+import peer from "./peer.ts";
 import { Peer } from "./types.ts";
 
 /**
@@ -16,19 +16,24 @@ import { Peer } from "./types.ts";
  * @param streams streams to be zipped (at least two make sense)
  * @return zipped stream
  */
-export default <TS extends any[]>(...streams: Peer<TS[number]>[]): Peer<TS[number]> =>
-  peer(publish => {
+export default <TS extends any[]>(
+  ...streams: Peer<TS[number]>[]
+): Peer<TS[number]> =>
+  peer((publish) => {
     const queues: (TS[number])[][] = streams.map(() => []);
     let currentQueue = 0;
     function emit() {
       if (queues[currentQueue].length) {
-        publish(queues[currentQueue].shift())
-        currentQueue++
-        if (currentQueue === queues.length) currentQueue = 0
-        emit()
+        publish(queues[currentQueue].shift());
+        currentQueue++;
+        if (currentQueue === queues.length) currentQueue = 0;
+        emit();
       }
     }
-    streams.forEach((stream, number) => stream.subscribe(value => {
-      queues[number].push(value); emit()
-    }))
-  })
+    streams.forEach((stream, number) =>
+      stream.subscribe((value) => {
+        queues[number].push(value);
+        emit();
+      })
+    );
+  });

@@ -1,5 +1,5 @@
-import peer from './peer.ts'
-import { Peer } from "./types.ts"
+import peer from "./peer.ts";
+import { Peer } from "./types.ts";
 
 /**
  * mixes input streams into single stream:
@@ -17,5 +17,7 @@ import { Peer } from "./types.ts"
  * @param streams sources to be mixed (at least two will make sense)
  * @return mixed stream
  */
-export default <T extends unknown[]>(...streams: Peer<T[number]>[]): Peer<T[number]> =>
-  peer(publish => streams.forEach(stream => stream.subscribe(publish)))
+export default <T extends unknown[]>(
+  ...streams: Peer<T[number]>[]
+): Peer<T[number]> =>
+  peer((publish) => streams.forEach((stream) => stream.subscribe(publish)));

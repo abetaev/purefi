@@ -10,4 +10,4 @@ import peer from "./peer.ts";
  * @returns stream of unpacked values
  */
 export default <T>(stream: Peer<T[]>): Peer<T> =>
-  peer(publish => stream.subscribe(packed => packed.forEach(publish)))
+  peer((publish) => stream.subscribe((packed) => packed.forEach(publish)));

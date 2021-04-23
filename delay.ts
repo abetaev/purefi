@@ -1,6 +1,6 @@
-import { Converter } from './map.ts';
-import peer from './peer.ts';
-import { Peer } from './types.ts';
+import { Converter } from "./map.ts";
+import peer from "./peer.ts";
+import { Peer } from "./types.ts";
 
 /**
  * creates stream of delayed events.
@@ -9,4 +9,6 @@ import { Peer } from './types.ts';
  * @param delay function which decides delay for each event
  */
 export default <T>(stream: Peer<T>, delay: Converter<T, number>): Peer<T> =>
-  peer(publish => stream.subscribe(event => setTimeout(() => publish(event), delay(event))))
+  peer((publish) =>
+    stream.subscribe((event) => setTimeout(() => publish(event), delay(event)))
+  );

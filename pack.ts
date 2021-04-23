@@ -1,7 +1,7 @@
 import { Peer } from "./types.ts";
 import peer from "./peer.ts";
 
-type Predicate<T> = (input: T) => boolean
+type Predicate<T> = (input: T) => boolean;
 
 /**
  * packs series of events into arrays producing new stream
@@ -12,17 +12,18 @@ type Predicate<T> = (input: T) => boolean
  *              no package will be created until `begin` returns `true`
  * @return packed stream
  */
-export default <T>(stream: Peer<T>, begin: Predicate<T>): Peer<T[]> => peer(publish => {
-  let pack: T[]
-  stream.subscribe(event => {
-    if (begin(event)) {
-      if (pack) {
-        publish(pack)
+export default <T>(stream: Peer<T>, begin: Predicate<T>): Peer<T[]> =>
+  peer((publish) => {
+    let pack: T[];
+    stream.subscribe((event) => {
+      if (begin(event)) {
+        if (pack) {
+          publish(pack);
+        }
+        pack = [];
       }
-      pack = []
-    }
-    if (pack) {
-      pack.push(event)
-    }
-  })
-})
+      if (pack) {
+        pack.push(event);
+      }
+    });
+  });

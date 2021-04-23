@@ -1,8 +1,9 @@
 import peer from "./peer.ts";
 import { Peer } from "./types.ts";
 
-type Filter<I, O extends I = I> =
-  (value: I) => I extends O ? (O | undefined) : undefined
+type Filter<I, O extends I = I> = (
+  value: I,
+) => I extends O ? (O | undefined) : undefined;
 
 /**
  * filters stream.
@@ -14,13 +15,13 @@ type Filter<I, O extends I = I> =
 export default <I, O extends I = I>(
   stream: Peer<I>,
   filter: Filter<I, O>,
-  promoteUpstream = true
+  promoteUpstream = true,
 ): Peer<O> => {
-  const output = peer<O>()
-  const upstream = stream.subscribe(value => {
-    const filtered: O | undefined = filter(value)
-    if (typeof filtered !== "undefined") output.publish(filtered)
-  })
-  promoteUpstream && output.subscribe(upstream)
+  const output = peer<O>();
+  const upstream = stream.subscribe((value) => {
+    const filtered: O | undefined = filter(value);
+    if (typeof filtered !== "undefined") output.publish(filtered);
+  });
+  promoteUpstream && output.subscribe(upstream);
   return output;
-}
+};

@@ -1,5 +1,5 @@
-import peer from "./peer.ts"
-import { Peer } from "./types.ts"
+import peer from "./peer.ts";
+import { Peer } from "./types.ts";
 
 /**
  * should work as `link` but it does not.
@@ -8,17 +8,17 @@ import { Peer } from "./types.ts"
  * @return a pair of mutually gated peers.
  */
 export default <T>(source?: Peer<T>): [Peer<T>, Peer<T>] => {
-  source = source || peer()
-  const target = peer<T>()
+  source = source || peer();
+  const target = peer<T>();
 
   return [
     {
       publish: target.subscribe(source.publish),
-      subscribe: source.subscribe
+      subscribe: source.subscribe,
     },
     {
       publish: source.subscribe(target.publish),
-      subscribe: target.subscribe
-    }
-  ]
-}
+      subscribe: target.subscribe,
+    },
+  ];
+};

@@ -10,9 +10,9 @@ import peer from "./peer.ts";
  * @return gated peer
  */
 export default <T>(source: Peer<T>): Peer<T> => {
-  const target = peer<T>()
+  const target = peer<T>();
   return {
     subscribe: target.subscribe,
-    publish: source.subscribe(target.publish)
-  }
-}
+    publish: source.subscribe(target.publish),
+  };
+};

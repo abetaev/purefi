@@ -4,7 +4,7 @@
  * @param value value to publish into topic
  * @returns promise to be resolved when value is actually published
  */
-type Publisher<T> = (value: T) => Promise<void>
+type Publisher<T> = ((value: T) => Promise<void>) | ((value: T) => void);
 
 /**
  * receives events after being put into bus
@@ -13,7 +13,7 @@ type Publisher<T> = (value: T) => Promise<void>
  * @param publish function to send events to other subscribers through topic
  *                published event will not be delivered to this subsciber
  */
-type Subscriber<T, S extends Peer<T> = Peer<T>> = (input: T, source: S) => void
+type Subscriber<T, S extends Peer<T> = Peer<T>> = (input: T, source: S) => void;
 
 interface Peer<T> {
   /**
@@ -24,13 +24,12 @@ interface Peer<T> {
    *          events published with this publisher will not
    *          be delivered to the subscriber from @param
    */
-  subscribe: (subscriber: Subscriber<T>) => Publisher<T>
+  subscribe: (subscriber: Subscriber<T>) => Publisher<T>;
 
   /**
    * publishes event to all current subscribers.
    */
-  publish: Publisher<T>
-
+  publish: Publisher<T>;
 }
 
-export type { Publisher, Subscriber, Peer }
+export type { Peer, Publisher, Subscriber };
