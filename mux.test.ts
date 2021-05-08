@@ -18,13 +18,13 @@ test("demux", async () => {
   const actual = await new Promise((resolve) => {
     let even: number[];
     let odd: number[];
-    muxed.subscribe(async ({ id, stream }) => {
+    muxed.subscribe(async ({ id, peer }) => {
       switch (id) {
         case "odds":
-          odd = await collect(stream, 5);
+          odd = await collect(peer, 5);
           break;
         case "even":
-          even = await collect(stream, 4);
+          even = await collect(peer, 4);
           break;
       }
       odd && even && resolve([odd, even]);
@@ -45,8 +45,8 @@ test("run and upstream", async () => {
     (data, channel) => ({ channel, data }),
   );
 
-  muxed.publish({ id: "odds", stream: cast(1, 3, 5, 7, 9) });
-  muxed.publish({ id: "even", stream: cast(2, 4, 6, 8) });
+  muxed.publish({ id: "odds", peer: cast(1, 3, 5, 7, 9) });
+  muxed.publish({ id: "even", peer: cast(2, 4, 6, 8) });
 
   const actual = await collect(upstream, 9);
 
@@ -73,9 +73,9 @@ test("names should be unique", async () => {
   await collect(muxed, 2);
 
   try {
-    muxed.publish({ id: "odds", stream: peer() });
+    muxed.publish({ id: "odds", peer: peer() });
     fail("should have thrown exception");
   } catch {
-    console.log("exception on duplicate stream");
+    console.log("exception on duplicate peer");
   }
 });

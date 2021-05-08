@@ -1,7 +1,7 @@
 import { Peer } from "./types.ts";
 
 /**
- * collects specified number of events from stream.
+ * collects specified number of events from peer.
  * 
  * useful for testing.
  * 
@@ -9,7 +9,7 @@ import { Peer } from "./types.ts";
  * @param n number of events to collect
  * @returns promise which resolves iif `n` events were collected
  */
-export default <T>(stream: Peer<T>, n: number): Promise<T[]> => {
+export default function<T>(stream: Peer<T>, n: number): Promise<T[]> {
   const collected: T[] = [];
   return new Promise((resolve) => {
     stream.subscribe((value) => {
@@ -23,4 +23,4 @@ export default <T>(stream: Peer<T>, n: number): Promise<T[]> => {
       }
     });
   });
-};
+}

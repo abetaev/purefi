@@ -8,11 +8,11 @@ import { Peer } from "./types.ts";
  * 
  * @return pair of peers which are gated relatively to each other
  */
-export default function <I, O = I>(): [Peer<I>, Peer<O>] {
-  const node = peer<I | O>();
+export default function <T>(): [Peer<T>, Peer<T>] {
+  const node = peer<T>();
 
-  const first = gate<I>(node as Peer<I>);
-  const second = gate<O>(node as Peer<O>);
+  const first = gate<T>(node as Peer<T>);
+  const second = gate<T>(node as Peer<T>);
 
   return [first, second];
 }
