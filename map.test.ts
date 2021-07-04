@@ -1,12 +1,13 @@
 import cast from "./cast.ts";
 import collect from "./collect.ts";
 import map from "./map.ts";
+import peer from "./peer.ts";
 import { assertEquals } from "https://deno.land/std@0.90.0/testing/asserts.ts";
 
 const test = Deno.test;
 
-test("map number to string", async () => {
-  const subject = map(cast<number>(1, 2, 3), (n) => `${n}`);
+test("downstream", async () => {
+  const subject = map(cast<number>(1, 2, 3), (n) => `${n}`, (s) => +s);
 
   const actual = await collect(subject, 3);
 
@@ -18,16 +19,18 @@ test("map number to string", async () => {
 });
 
 test("upstream", async () => {
-  const subject = cast<number>(1, 2, 3);
+  const subject = peer<number>();
 
   const downstream = map(subject, (n) => `${n}`, (s) => +s);
 
-  downstream.subscribe((input, peer) => peer.publish(input));
+  ['1', '2', '3'].forEach(downstream.publish)
 
-  const actual = await collect(subject, 6);
+  const actual = await collect(subject, 3);
 
   assertEquals(
     actual,
-    [1, 2, 3, 1, 2, 3],
+    [1, 2, 3],
   );
 });
+
+// TODO: test publish/subscribe isolation

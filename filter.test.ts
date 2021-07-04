@@ -2,6 +2,7 @@ import filter from "./filter.ts";
 import cast from "./cast.ts";
 import collect from "./collect.ts";
 import peer from "./peer.ts";
+import type {Peer} from './types.ts'
 import { assertEquals } from "https://deno.land/std@0.90.0/testing/asserts.ts";
 
 const test = Deno.test;
@@ -37,8 +38,8 @@ test("discrimination", async () => {
 test("upstream", async () => {
   const subject = peer<string | number>();
 
-  const numbers = filter(subject, (x) => typeof x === "number" ? x : undefined);
-  const strings = filter(subject, (x) => typeof x === "string" ? x : undefined);
+  const numbers:Peer<number> = filter(subject, (x) => typeof x === "number" ? x : undefined);
+  const strings:Peer<string> = filter(subject, (x) => typeof x === "string" ? x : undefined);
 
   [1, 3, 5, 7, 9].forEach(numbers.publish);
   ["2", "4", "6", "8"].forEach(strings.publish);
