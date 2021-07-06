@@ -7,34 +7,24 @@ const fail = (message: string) => {
   throw message;
 };
 
-test({
-  name: "pair isolation",
-  ignore: true,
-  fn: async () => {
-    const [left, right] = pair();
+test("pair isolation", async () => {
+  const [left, right] = pair();
 
-    let direction = "none";
-    left.subscribe((value) =>
-      direction === "l2r" && fail(`unexpected in 'l': ${value}`)
-    );
-    right.subscribe((value) =>
-      direction === "r2l" && fail(`unexpected in 'r': ${value}`)
-    );
+  let direction = "none";
+  left.subscribe((value) =>
+    direction === "l2r" && fail(`unexpected in 'l': ${value}`)
+  );
+  right.subscribe((value) =>
+    direction === "r2l" && fail(`unexpected in 'r': ${value}`)
+  );
 
-    console.log(0);
+  direction = "l2r";
+  [1, 2, 3].forEach(left.publish);
+  assertEquals(await collect(right, 3), [1, 2, 3]);
 
-    direction = "l2r";
-    [1, 2, 3].forEach(left.publish);
-    assertEquals(await collect(right, 3), [1, 2, 3]);
-
-    console.log(1);
-
-    direction = "r2l";
-    [6, 5, 4].forEach(right.publish);
-    assertEquals(await collect(left, 3), [6, 5, 4]);
-
-    console.log(2);
-  },
+  direction = "r2l";
+  [6, 5, 4].forEach(right.publish);
+  assertEquals(await collect(left, 3), [6, 5, 4]);
 });
 
 test("exchange", async () => {

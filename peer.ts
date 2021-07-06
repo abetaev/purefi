@@ -5,7 +5,10 @@ type Producer<T> = (publisher: Publisher<T>) => void;
 const later = (fun: () => void) => Promise.resolve(fun).then((fun) => fun());
 
 /**
- * basic function to define peer.
+ * single exchange point of information, allows to build star-topology structures
+ * (pubsub topic)
+ *
+ * base for everything else here.
  *
  * @param producer if provided, supplies consumer with values when they arrive
  */

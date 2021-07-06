@@ -1,18 +1,26 @@
 import gate from "./gate.ts";
 import peer from "./peer.ts";
-import { Peer } from "./types.ts";
+import { Peer, Publisher, Subscriber } from "./types.ts";
 
 /**
- * creates link, a pair of peers which are publishing
- * and consuming only from each other.
- * 
- * @return pair of peers which are gated relatively to each other
+ * dual exchange point of information, allows to build chained structures
+ * (network connection)
+ *
+ * useful of handling interfaces like WebSocket = { send, onmessage, ... }
+ * to port to purefi interface.
+ *
+ * @param publishDownstream function to publish to downstream service
+ * @param subscribeDownstream function to subscribe to downstream service
+ * @returns peer which represents duplex connection
  */
-export default function <T>(): [Peer<T>, Peer<T>] {
-  const node = peer<T>();
-
-  const first = gate<T>(node as Peer<T>);
-  const second = gate<T>(node as Peer<T>);
-
-  return [first, second];
+export default function <T>(
+  publishDownstream: Publisher<T>,
+  subscribeDownstream: (subscriber: Subscriber<T>) => void,
+): Peer<T> {
+  const { subscribe, publish } = peer<T>();
+  subscribeDownstream(subscribe((data) => publishDownstream(data)));
+  return gate({
+    subscribe,
+    publish,
+  });
 }
