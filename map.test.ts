@@ -6,7 +6,7 @@ import { assertEquals } from "https://deno.land/std@0.90.0/testing/asserts.ts";
 
 const test = Deno.test;
 
-test("downstream", async () => {
+test("output", async () => {
   const subject = map(cast<number>(1, 2, 3), (n) => `${n}`, (s) => +s);
 
   const actual = await collect(subject, 3);
@@ -16,9 +16,11 @@ test("downstream", async () => {
     ["1", "2", "3"],
     "numbers are mapped to strings",
   );
+
+  
 });
 
-test("upstream", async () => {
+test("input", async () => {
   const subject = peer<number>();
 
   const downstream = map(subject, (n) => `${n}`, (s) => +s);

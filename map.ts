@@ -1,5 +1,4 @@
-import { Peer, Publisher, Subscriber } from "./types.ts";
-import peer from "./peer.ts";
+import { Peer, Subscriber } from "./types.ts";
 
 export type Converter<I, O> = (input: I) => O;
 

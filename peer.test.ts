@@ -1,4 +1,3 @@
-import next from "./collect.ts";
 import peer from "./peer.ts";
 import collect from "./collect.ts";
 import cast from "./cast.ts";
@@ -13,7 +12,7 @@ test("emits all inputs", async () => {
   const expected = [1, 2, 3];
   const subject = peer<number>((c) => expected.forEach((n) => c(n)));
 
-  const actual = await next(subject, 3);
+  const actual = await collect(subject, 3);
 
   assertEquals(actual, expected, "received all same as emitted");
 });
@@ -24,7 +23,7 @@ test("emits all external inputs", async () => {
 
   const promises = expected.map((s) => subject.publish(s));
 
-  const actual = next(subject, 3);
+  const actual = collect(subject, 3);
 
   await Promise.all(promises);
 
