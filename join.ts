@@ -1,22 +1,21 @@
-import peer from "./peer.ts";
-import {Peer, Publisher} from "./types.ts";
+import type {Peer, Handler} from "./types.ts";
 
 type Input<T> = {[channel in keyof T]: Peer<T[channel]>}
-type Output<T extends {[channel in keyof T]: T[channel]}> = Peer<{[K in keyof T]-?: {channel: K, value: T[K]}}[keyof T]>
-
+type Output<T> = {[K in keyof T]-?: {channel: K, value: T[K]}}[keyof T]
+type OutputPeer<T extends {[channel in keyof T]: T[channel]}> = Peer<Output<T>>
 
 export default function <T>(
   source: Input<T>
-): Output<T> {
-  const mixedPeer: Output<T> = peer();
-
-  const publishers = {} as {[channel in keyof T]: Publisher<T[channel]>}
+): OutputPeer<T> {
+  const subscribers: Handler<Output<T>>[] = []
+  const mixedPeer: OutputPeer<T> = {
+    publish: ({channel, value}) => source[channel].publish(value),
+    subscribe: (subscriber) => subscribers.push(subscriber)
+  };
 
   Object.keys(source)
     .map(key => key as keyof Input<T>) /* <-- for sake of typing!!! */
-    .forEach(channel => publishers[channel] = source[channel].subscribe((value) => publish({channel, value})));
-
-  const publish = mixedPeer.subscribe(<K extends keyof T>({channel, value}: {channel: K, value: T[K]}) => publishers[channel](value))
+    .forEach(channel => source[channel].subscribe(value => subscribers.forEach(subscriber => subscriber({channel, value}))));
 
   return mixedPeer
 }
